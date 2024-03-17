@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react';
-import InputComponent from './Input';
+import { Input } from '@components';
 
 const menuOptions = [
   '2024',
@@ -78,9 +78,9 @@ export const Dropdown = () => {
       </button>
       <div
         className={`${isOpen ? '' : 'hidden'
-          } w-full absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1`}
+          } w-full absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1 z-10`}
       >
-        <InputComponent onChange={handleInputChange} placeholder='Buscar año' clearIcon onClickClearIcon={handleClearInput} />
+        <Input onChange={handleInputChange} placeholder='Buscar año' clearIcon onClickClearIcon={handleClearInput} />
         {filteredOptions.map((option, index) => (
           <p
             key={index}

@@ -1,0 +1,1 @@
+export { formatNumberToCLP } from './formatNumberToCLP'

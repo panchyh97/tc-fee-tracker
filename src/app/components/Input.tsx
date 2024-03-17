@@ -11,7 +11,7 @@ interface Input {
   clearIcon?: boolean;
 }
 
-const InputComponent = ({
+export const Input = ({
   type = "text",
   onChange,
   className,
@@ -65,5 +65,3 @@ const InputComponent = ({
     </div>
   );
 };
-
-export default InputComponent;
