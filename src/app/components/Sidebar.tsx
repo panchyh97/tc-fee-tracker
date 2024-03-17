@@ -43,7 +43,7 @@ export const Sidebar = () => {
             </div>
 
 
-            <div id="nav" className="w-full pl-6 h-screen flex flex-col">
+            <div id="nav" className="w-full pl-6 flex flex-col">
                 {
                     menuItems.map(item => (
                         <SidebarMenuItem key={item.path} {...item} />
