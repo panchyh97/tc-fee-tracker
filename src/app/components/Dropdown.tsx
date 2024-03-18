@@ -9,11 +9,15 @@ const menuOptions = [
   '2022',
 ];
 
+interface IDropdown {
+  onChange?: (selectedValue: number) => void;
+  initialValue?: string;
+}
 
-export const Dropdown = () => {
+export const Dropdown = ({ onChange, initialValue = menuOptions[0] }: IDropdown) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [selectedOption, setSelectedOption] = useState<string>('');
+  const [selectedOption, setSelectedOption] = useState<string>(initialValue);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,7 +33,6 @@ export const Dropdown = () => {
     };
   }, []);
 
-
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -41,6 +44,7 @@ export const Dropdown = () => {
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
     setIsOpen(false);
+    onChange && onChange(option as unknown as number);
   };
 
   const handleClearInput = () => {

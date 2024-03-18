@@ -1,4 +1,3 @@
-import React from 'react'
 import { formatNumberToCLP } from '@utils';
 import { Button } from '@components'
 
@@ -8,7 +7,22 @@ interface IAmount {
   formatAmount?: boolean;
 }
 
-export const MonthCard = () => {
+interface IMonthCard {
+  year: number;
+  month: string;
+  totalAmount: number;
+  purchases: number;
+  people: number;
+}
+
+export const MonthCard = ({
+  year,
+  month,
+  totalAmount,
+  purchases,
+  people,
+}: IMonthCard) => {
+
   const Amount = ({ title, amount, formatAmount = false }: IAmount) => {
     return (
       <>
@@ -22,20 +36,20 @@ export const MonthCard = () => {
   }
 
   return (
-    <div className="relative flex flex-col rounded-xl bg-gray-100 bg-clip-border shadow-md p-7 min-w-96">
+    <div className="relative flex flex-col rounded-xl bg-gray-100 bg-clip-border shadow-md p-7 min-w-96 mr-8">
       <div className="relative flex flex-col items-start pb-4 font-semibold">
-        <p className='text-gray-400 text-2xl'>2024</p>
-        <p className='text-5xl text-gray-900'>Marzo</p>
+        <p className='text-gray-400 text-2xl'>{year}</p>
+        <p className='text-5xl text-gray-900 uppercase'>{month}</p>
       </div>
       <div className="">
-        <Amount title="💵 Monto total" amount={1234546} formatAmount />
+        <Amount title="💵 Monto total" amount={totalAmount} formatAmount />
       </div>
       <div className="flex flex-row my-8 w-full">
         <div className='mr-4 w-full'>
-          <Amount title="🛍️ Compras" amount={43} />
+          <Amount title="🛍️ Compras" amount={purchases} />
         </div>
         <div className='w-full'>
-          <Amount title="👥 Personas" amount={2} />
+          <Amount title="👥 Personas" amount={people} />
         </div>
       </div>
       <Button title='Detalle del mes' />
