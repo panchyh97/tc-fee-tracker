@@ -13,6 +13,7 @@ interface IMonthCard {
   totalAmount: number;
   purchases: number;
   people: number;
+  onClick: () => void;
 }
 
 export const MonthCard = ({
@@ -21,6 +22,7 @@ export const MonthCard = ({
   totalAmount,
   purchases,
   people,
+  onClick
 }: IMonthCard) => {
 
   const Amount = ({ title, amount, formatAmount = false }: IAmount) => {
@@ -52,6 +54,6 @@ export const MonthCard = ({
           <Amount title="👥 Personas" amount={people} />
         </div>
       </div>
-      <Button title='Detalle del mes' />
+      <Button title='Detalle del mes' onClick={onClick} />
     </div>)
 }

@@ -1,8 +1,10 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { Dropdown, MonthCard } from "@components";
 import { GET } from './api/route'
 import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
 
 interface IMonthSummary {
     year: number;
@@ -13,6 +15,8 @@ interface IMonthSummary {
 }
 
 export default function HomePage() {
+    const router = useRouter()
+
     const [selectedYear, setSelectedYear] = useState<number>(2024);
 
     const handleDropdownChange = (selectedValue: number) => {
@@ -28,7 +32,6 @@ export default function HomePage() {
 
     useEffect(() => {
         getMonthsSummary();
-
     }, [selectedYear])
 
     return (
@@ -39,10 +42,11 @@ export default function HomePage() {
             </div>
             <div className="w-full max-w-4xl flex flex-row overflow-x-auto">
                 <div className="invisible w-60">
-                    <MonthCard month="" people={0} purchases={0} totalAmount={0} year={0} key={0} />
+                    <MonthCard month="" people={0} purchases={0} totalAmount={0} year={0} key={0} onClick={() => null} />
                 </div>
                 {monthList.map((month, index) => {
-                    return <MonthCard key={index} {...month} />
+                    return <MonthCard key={index} {...month} onClick={() => router.push(`/detail/${selectedYear}/${month.month
+                        }`)} />
                 })}
             </div>
         </div>
