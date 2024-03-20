@@ -1,19 +1,63 @@
-import { Button } from "@components";
+'use client'
+
+import { Button, Table } from "@components";
 import { Months, capitalizeFirstLetter, formatNumberToCLP } from "@utils";
+import { useEffect, useState } from "react";
+import { GET } from "./api/route";
 
 interface ICard {
   title: string;
   amount: number;
   showIcon?: boolean;
   editBtn?: boolean;
+  children?: JSX.Element;
+}
+
+interface IPurchases {
+  purchaseNumber: number;
+  purchaseDate: string;
+  purchaseDetail: string;
+  purchaseFee: number;
+  purchaseTotalFees: number;
+  feeValue: number;
+  asignedPerson: string;
+}
+
+interface IMonthResponse {
+  invoicedAmount: number,
+  purchases: IPurchases[]
 }
 
 export default function MonthPage({ params }: { params: { year: string, month: string } }) {
   const { year, month } = params;
 
+  const [monthDetail, setMonthDetail] = useState<IMonthResponse>();
+
+  const getMonthsSummary = () => GET(year, month).then(
+    res => {
+      return setMonthDetail(res.body);
+    })
+
+  useEffect(() => {
+    getMonthsSummary();
+  }, [year, month])
+
   const transformMonth: string = Months[month]
 
-  const Card = ({ title, amount, showIcon = false, editBtn = false }: ICard) => {
+  const calculateMonthTotal = (): number => {
+    if (monthDetail) {
+      const totalAmount = monthDetail.purchases.reduce((accumulator, currentValue) => {
+        return accumulator + currentValue.feeValue;
+      }, 0);
+
+      return totalAmount;
+    }
+    return 0;
+  }
+
+  const people = Array.from(new Set(monthDetail?.purchases.map(p => p.asignedPerson).filter((p) => p !== "")));
+
+  const Card = ({ title, amount, showIcon = false, editBtn = false, children }: ICard) => {
     return <div className="flex flex-row bg-gray-200 px-8 py-5 rounded-2xl">
       {showIcon && <div className="w-3/12">Imagen</div>}
       <div className="flex flex-col text-xs">
@@ -21,7 +65,7 @@ export default function MonthPage({ params }: { params: { year: string, month: s
           {title} {editBtn && 'Editar'}
         </div>
         <div className="text-3xl font-semibold">
-          {formatNumberToCLP(amount)}
+          {children ? children : formatNumberToCLP(amount)}
         </div>
       </div>
     </div>
@@ -32,13 +76,20 @@ export default function MonthPage({ params }: { params: { year: string, month: s
       <h1 className="font-semibold uppercase text-4xl mb-8">{transformMonth} {year}</h1>
       <div className="w-full flex flex-row justify-between mb-8">
         <div className="w-2/5">
-          <Card title={`Total a pagar en ${capitalizeFirstLetter(transformMonth)}`} amount={432} showIcon />
+          <Card title={`Total a pagar en ${capitalizeFirstLetter(transformMonth)}`} amount={calculateMonthTotal()} showIcon />
         </div>
         <div className="w-3/12">
-          <Card title="Monto facturado" amount={432} editBtn />
+          {monthDetail?.invoicedAmount === 0 ?
+            <Card title="Monto facturado" amount={monthDetail?.invoicedAmount as number} editBtn={
+              monthDetail?.invoicedAmount > 0 ? true : false
+            }>
+              <Button title="+ Agregar facturación" className="text-sm" outline />
+            </Card>
+            : <Card title="Monto facturado" amount={monthDetail?.invoicedAmount as number} editBtn />
+          }
         </div>
         <div className="w-3/12">
-          <Card title="Diferencia" amount={432} />
+          <Card title="Diferencia" amount={monthDetail?.invoicedAmount as number - calculateMonthTotal()} />
         </div>
       </div>
       <div className="w-full flex flex-row justify-between">
@@ -48,7 +99,16 @@ export default function MonthPage({ params }: { params: { year: string, month: s
         </div>
         <Button title="Agregar pago de tarjeta" />
       </div>
-      <div></div>
+      <div className="w-full my-8">
+        {monthDetail?.purchases && <Table purchases={monthDetail?.purchases.filter(purchase => purchase.asignedPerson === "")} />}
+      </div>
+      <div className="w-full grid grid-cols-2">
+        {
+          people.map((p, index) => {
+            return monthDetail?.purchases && <Table key={index} purchases={monthDetail?.purchases.filter(purchase => purchase.asignedPerson === p)} />
+          })
+        }
+      </div>
     </div>
   );
 }

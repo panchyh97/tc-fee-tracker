@@ -7,9 +7,10 @@ interface Props {
   path: string;
   icon: JSX.Element;
   title: string;
+  showDrawer?: boolean;
 }
 
-export const SidebarMenuItem = ({ path, icon, title }: Props) => {
+export const SidebarMenuItem = ({ path, icon, title, showDrawer = true }: Props) => {
   const currentPath = usePathname();
 
   return (
@@ -23,8 +24,8 @@ export const SidebarMenuItem = ({ path, icon, title }: Props) => {
             <div>
               {icon}
             </div>
-            <span className={`ml-2 text-lg font-bold transition-all ease-linear duration-150 leading-5
-                ${currentPath === path ? 'text-blue-600' : 'text-gray-900'}
+            <span className={`ml-2  font-bold transition-all ease-linear duration-300 leading-5
+                ${currentPath === path ? 'text-blue-600' : 'text-gray-900'} ${showDrawer ? 'text-lg' : 'text-[0px]'}
               `}>{title}</span>
           </div>
         </Link>
