@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Table } from "@components";
+import { Button, Dropdown, Input, Modal, Table } from "@components";
 import { Months, capitalizeFirstLetter, formatNumberToCLP } from "@utils";
 import { useEffect, useState } from "react";
 import { GET } from "./api/route";
@@ -28,19 +28,33 @@ interface IMonthResponse {
   purchases: IPurchases[]
 }
 
-export default function MonthPage({ params }: { params: { year: string, month: string } }) {
+interface MonthPageProps {
+  params: { year: string; month: string };
+}
+
+export default function MonthPage({ params }: MonthPageProps) {
   const { year, month } = params;
 
   const [monthDetail, setMonthDetail] = useState<IMonthResponse>();
+  const [openRegisterPurchaseModal, setOpenRegisterPurchaseModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setOpenRegisterPurchaseModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenRegisterPurchaseModal(false);
+  };
 
   const getMonthsSummary = () => GET(year, month).then(
     res => {
       return setMonthDetail(res.body);
     })
 
+
   useEffect(() => {
     getMonthsSummary();
-  }, [year, month])
+  }, [year, month]);
 
   const transformMonth: string = Months[month]
 
@@ -93,7 +107,22 @@ export default function MonthPage({ params }: { params: { year: string, month: s
         </div>
       </div>
       <div className="w-full flex flex-row justify-between">
-        <Button title="Registrar compra" />
+        <Button title="Registrar compra" onClick={handleOpenModal} />
+        <Modal isOpen={openRegisterPurchaseModal} onClose={handleCloseModal}>
+          <>
+            <h1 className="font-semibold">Agregar compra</h1>
+            <div><Input placeholder="Detalle de la compra" /></div>
+            <div className="flex flex-row my-8">
+              <Input placeholder="Cantidad de cuotas" />
+              <Input placeholder="Valor de cada cuota" />
+            </div>
+            <div>
+              <Dropdown />
+            </div>
+            <div></div>
+            <div><Button title="Agregar" /> </div>
+          </>
+        </Modal>
         <div className="w-full mx-4">
           <Button title="Agregar persona" />
         </div>
